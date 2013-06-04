@@ -132,7 +132,7 @@ func (this *ResponseBuilder) SetSessionToken(token string, path string, expires 
 func (this *ResponseBuilder) RemoveSessionToken(path string) {
 	this.SetSessionToken("", path, time.Unix(0, 0).UTC())
 }
-func (this *ResponseBuilder) writer() http.ResponseWriter {
+func (this *ResponseBuilder) Writer() http.ResponseWriter {
 	return this.ctx.writer
 }
 
@@ -145,7 +145,7 @@ func (this *ResponseBuilder) SetResponseCode(code int) *ResponseBuilder {
 //Set the content type of the http entity that is to be sent to the client.
 func (this *ResponseBuilder) SetContentType(mime string) *ResponseBuilder {
 	this.ctx.responseMimeSet = true
-	this.writer().Header().Set("Content-Type", mime)
+	this.Writer().Header().Set("Content-Type", mime)
 	return this
 }
 
@@ -175,10 +175,10 @@ func (this *ResponseBuilder) Write(data []byte) *ResponseBuilder {
 	}
 	if !this.ctx.dataHasBeenWritten {
 		//TODO: Check for content type set.......
-		this.writer().WriteHeader(this.ctx.responseCode)
+		this.Writer().WriteHeader(this.ctx.responseCode)
 	}
 
-	this.writer().Write(data)
+	this.Writer().Write(data)
 	this.ctx.dataHasBeenWritten = true
 	return this
 }
@@ -246,60 +246,60 @@ func (this *ResponseBuilder) CacheSMaxAge(seconds int) *ResponseBuilder {
 
 //Delete/clear all Cache-control options from the response header.
 func (this *ResponseBuilder) CacheClearAllOptions() *ResponseBuilder {
-	this.writer().Header().Del("Cache-control")
+	this.Writer().Header().Del("Cache-control")
 	return this
 }
 
 //Set a "Connection" field of "keep-alive" to the response header.
 func (this *ResponseBuilder) ConnectionKeepAlive() *ResponseBuilder {
-	this.writer().Header().Set("Connection", "keep-alive")
+	this.Writer().Header().Set("Connection", "keep-alive")
 	return this
 }
 
 //Set a "Connection" field of "close" to the response header.
 func (this *ResponseBuilder) ConnectionClose() *ResponseBuilder {
-	this.writer().Header().Set("Connection", "close")
+	this.Writer().Header().Set("Connection", "close")
 	return this
 }
 
 //Set a "Location" field of "??" to the response header.
 func (this *ResponseBuilder) Location(location string) *ResponseBuilder {
-	this.writer().Header().Set("Location", location)
+	this.Writer().Header().Set("Location", location)
 	return this
 }
 
 //Set a "Location" field of "??" and set the responseCode to 201, to the response header.
 func (this *ResponseBuilder) Created(location string) *ResponseBuilder {
 	this.ctx.responseCode = 201
-	this.writer().Header().Set("Location", location)
+	this.Writer().Header().Set("Location", location)
 	return this
 }
 
 //Set a "Location" field of "??" and set the responseCode to 301, to the response header.
 func (this *ResponseBuilder) MovedPermanently(location string) *ResponseBuilder {
 	this.ctx.responseCode = 301
-	this.writer().Header().Set("Location", location)
+	this.Writer().Header().Set("Location", location)
 	return this
 }
 
 //Set a "Location" field of "??" and set the responseCode to 302, to the response header.
 func (this *ResponseBuilder) Found(location string) *ResponseBuilder {
 	this.ctx.responseCode = 302
-	this.writer().Header().Set("Location", location)
+	this.Writer().Header().Set("Location", location)
 	return this
 }
 
 //Set a "Location" field of "??" and set the responseCode to 303, to the response header.
 func (this *ResponseBuilder) SeeOther(location string) *ResponseBuilder {
 	this.ctx.responseCode = 303
-	this.writer().Header().Set("Location", location)
+	this.Writer().Header().Set("Location", location)
 	return this
 }
 
 //Set a "Location" field of "??" and set the responseCode to 307, to the response header.
 func (this *ResponseBuilder) MovedTemporarily(location string) *ResponseBuilder {
 	this.ctx.responseCode = 307
-	this.writer().Header().Set("Location", location)
+	this.Writer().Header().Set("Location", location)
 	return this
 }
 
@@ -307,28 +307,28 @@ func (this *ResponseBuilder) MovedTemporarily(location string) *ResponseBuilder 
 //Experiment together with Etag for flexible cacheing combinations.
 
 func (this *ResponseBuilder) Age(seconds int) *ResponseBuilder {
-	this.writer().Header().Set("Age", strconv.Itoa(seconds))
+	this.Writer().Header().Set("Age", strconv.Itoa(seconds))
 	return this
 }
 
 //Set "Etag" to the resopnse.
 func (this *ResponseBuilder) ETag(tag string) *ResponseBuilder {
-	this.writer().Header().Set("ETag", tag)
+	this.Writer().Header().Set("ETag", tag)
 	return this
 }
 
 //Add an "Allow" field to the response header. 
 func (this *ResponseBuilder) Allow(tag string) *ResponseBuilder {
-	this.writer().Header().Add("Allow", tag)
+	this.Writer().Header().Add("Allow", tag)
 	return this
 }
 
 func (this *ResponseBuilder) setCache(option string) {
-	this.writer().Header().Add("Cache-control", option)
+	this.Writer().Header().Add("Cache-control", option)
 }
 
 func (this *ResponseBuilder) SetHeader(key string, value string) *ResponseBuilder {
-	this.writer().Header().Set(key, value)
+	this.Writer().Header().Set(key, value)
 	return this
 }
 
@@ -344,10 +344,10 @@ func (this *ResponseBuilder) SetHeader(key string, value string) *ResponseBuilde
 //	rb.AddHeader("Access-Control-Expose-Headers","X-Xsrf-Cookie")
 //		
 func (this *ResponseBuilder) AddHeader(key string, value string) *ResponseBuilder {
-	this.writer().Header().Add(key, value)
+	this.Writer().Header().Add(key, value)
 	return this
 }
 func (this *ResponseBuilder) DelHeader(key string) *ResponseBuilder {
-	this.writer().Header().Del(key)
+	this.Writer().Header().Del(key)
 	return this
 }
